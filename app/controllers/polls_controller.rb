@@ -130,13 +130,8 @@ class PollsController < ApplicationController
   end
 
   def cancel_bet
-    votes = User.current.votes_bet_by_issue(params[:issue_id])
-    if votes <= 0
-    votes = 0
-    else
-    votes *= -1
-    end
-    params[:bet] = {:votes => votes}
+    any_votes = (User.current.votes_bet_by_issue(params[:issue_id]) > 0)
+    params[:bet] = { :votes => any_votes ? -1 : 0 }
     bet
   end
 
@@ -146,6 +141,5 @@ class PollsController < ApplicationController
     @project = Project.find(params[:project_id])
   rescue ActiveRecord::RecordNotFound
     render_404
-    end
-
+  end
 end
