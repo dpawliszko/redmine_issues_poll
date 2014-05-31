@@ -21,41 +21,7 @@ class PollsController < ApplicationController
     @eligible_statuses = EligibleStatus.find(:all).collect{ |status| status.status_id }
   end
 
-  def index
-    @users = @project.users.collect {|user| {'id' => user.id, 'login' => user.login, 'fullname' => user.name(:firstname_lastname), 'votes' => user.polls_votes_project(@project.id)? user.polls_votes_project(@project.id) : '--'}}
-    @login = {'order' => 'asc', 'class' => ''}
-    @name = {'order' => 'asc', 'class' => ''}
-    @votes = {'order' => 'asc', 'class' => ''}
-
-    if params[:order_login]
-      if params[:order_login] == "asc"
-        @login = {'order' => 'desc', 'class' => 'sort asc'}
-        @users = @users.sort{|a, b| a['login'] <=> b['login'] }
-      else
-        @login = {'order' => 'asc', 'class' => 'sort desc'}
-        @users = @users.sort{|a, b| b['login'] <=> a['login'] }
-      end
-    elsif params[:order_name]
-      if params[:order_name] == "asc"
-        @name = {'order' => 'desc', 'class' => 'sort asc'}
-        @users = @users.sort{|a, b| a['fullname'] <=> b['fullname'] }
-      else
-        @name = {'order' => 'asc', 'class' => 'sort desc'}
-        @users = @users.sort{|a, b| b['fullname'] <=> a['fullname'] }
-      end
-    elsif params[:order_votes]
-      if params[:order_votes] == "asc"
-        @votes = {'order' => 'desc', 'class' => 'sort asc'}
-        @users = @users.sort{|a, b| a['votes'] <=> b['votes'] }
-      else
-        @votes = {'order' => 'asc', 'class' => 'sort desc'}
-        @users = @users.sort{|a, b| b['votes'] <=> a['votes'] }
-      end
-    else
-      @login = {'order' => 'desc', 'class' => 'sort asc'}
-      @users = @users.sort{|a, b| a['login'] <=> b['login'] }
-    end
-  end
+  def index; end
 
   def set_statuses
     EligibleStatus.delete_all
@@ -64,44 +30,6 @@ class PollsController < ApplicationController
     end
     flash[:notice] = t(:configuration_successful)
     redirect_to :action => 'index', :tab => 'config'
-  end
-
-  def set_votes
-    votes = params[:votes]
-    if /^\d+$/.match(votes)
-      @project.users.each do |user|
-        current_poll_votes = user.poll_votes.find(:first, :conditions => ["project_id = ?", @project.id])
-        if current_poll_votes
-          current_poll_votes.update_attribute(:votes, params[:votes])
-        else
-          user.poll_votes << @project.poll_votes.new(:votes => votes)
-        end
-      end
-      flash[:notice] = t(:assignment_successful)
-    else
-      flash[:error] = t(:invalid_votes)
-    end
-    redirect_to :action => 'index', :tab => 'config'
-  end
-
-  def update_votes
-    @votes = params[:votes]
-    @success = false
-    if /^\d+$/.match(@votes)
-      @user = User.find(params[:user_id])
-      current_poll_votes = @user.poll_votes.find(:first, :conditions => ["project_id = ?", @project.id])
-      if current_poll_votes
-        current_poll_votes.update_attribute(:votes, params[:votes])
-      else
-        @user.poll_votes << @project.poll_votes.new(:votes => @votes)
-      end
-      @success = true
-    end
-    
-    respond_to do |format|
-      format.js
-    end
-    
   end
 
   def bet
@@ -113,9 +41,6 @@ class PollsController < ApplicationController
     @added = false
     @success = false
     if @bet.save
-      poll_vote = user.poll_votes.find(:first, :conditions => ["project_id = ?", @issue.project_id])
-      poll_vote.votes -= @bet.votes
-      poll_vote.save
       @issue.bet_votes ||= 0
       @issue.bet_votes += @bet.votes
       @issue.save

@@ -23,7 +23,6 @@ class BetTest < ActiveSupport::TestCase
     @issue = Issue.generate_for_project!(@project)
     @eligible_status = EligibleStatus.generate!
     @issue.status_id = @eligible_status.status_id
-    @user.poll_votes << @project.poll_votes.new(:votes => 4)
   end
   
   def test_should_not_save_without_votes
@@ -38,17 +37,10 @@ class BetTest < ActiveSupport::TestCase
     assert !bet.save, "bet without author"
   end
   
-  
   def test_should_not_save_without_issue
     bet = new_bet
     bet.issue = nil
     assert !bet.save, "bet without issue"
-  end
-  
-  def test_should_not_save_without_enough_votes
-    bet = new_bet
-    bet.votes = 6
-    assert !bet.save, "user without enough votes"
   end
   
   def test_should_not_save_with_less_votes
@@ -66,5 +58,4 @@ class BetTest < ActiveSupport::TestCase
   def new_bet
     Bet.new(:votes => 1, :issue => @issue, :author => @user)
   end
-  
 end

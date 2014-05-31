@@ -15,6 +15,4 @@
 match 'projects/:project_id/polls' => 'polls#index'
 match 'projects/:project_id/polls/cancel_bet' => 'polls#cancel_bet'
 match 'projects/:project_id/polls/bet' => 'polls#bet'
-post 'projects/:project_id/polls/set_votes' => 'polls#set_votes'
 post 'projects/:project_id/polls/set_statuses' => 'polls#set_statuses'
-post 'projects/:project_id/polls/update_votes' => 'polls#update_votes'
