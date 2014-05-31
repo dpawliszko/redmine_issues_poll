@@ -8,7 +8,7 @@ pl:
   label_field_votes: "Liczba głosów przypadająca na użytkownika"
   label_bet_votes: "Zagłosuj"
   label_config: "Ustawienia"
-  label_votes_bet: "Głosy"
+  label_votes_bet: "Pokaż oddane głosy"
   label_issue_votes: "Liczba oddanych głosów"
   label_user_name: "Użytkownik"
   label_config_status: "Głosowanie aktywne dla statusów"

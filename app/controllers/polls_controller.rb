@@ -15,6 +15,7 @@ class PollsController < ApplicationController
   unloadable
 
   before_filter :find_project, :authorize
+  before_filter :find_issue, :only => [:bet, :cancel_bet]
   before_filter :get_statuses, :only => [:index, :set_statuses]
   def get_statuses
     @statuses = IssueStatus.find(:all, :order => 'position')
@@ -33,11 +34,9 @@ class PollsController < ApplicationController
   end
 
   def bet
-    @issue = Issue.find(:first, :conditions => ["id = ? AND project_id = ?", params[:issue_id], @project.id])
-    user = User.current
-    @bet = Bet.new(params[:bet])
+    @bet ||= Bet.new(:votes => 1)
     @bet.issue_id = @issue.id
-    @bet.user_id = user.id
+    @bet.user_id = User.current.id
     @added = false
     @success = false
     if @bet.save
@@ -56,7 +55,7 @@ class PollsController < ApplicationController
 
   def cancel_bet
     any_votes = (User.current.votes_bet_by_issue(params[:issue_id]) > 0)
-    params[:bet] = { :votes => any_votes ? -1 : 0 }
+    @bet = Bet.new(:votes => any_votes ? -1 : 0)
     bet
   end
 
@@ -64,6 +63,12 @@ class PollsController < ApplicationController
 
   def find_project
     @project = Project.find(params[:project_id])
+  rescue ActiveRecord::RecordNotFound
+    render_404
+  end
+
+  def find_issue
+    @issue = @project.issues.find(params[:issue_id])
   rescue ActiveRecord::RecordNotFound
     render_404
   end

@@ -30,7 +30,11 @@ module IssuesPollIssuePatch
     def can_receive_bet?
       EligibleStatus.find(:all).collect{|status| status.status_id}.include?(self.status_id)
     end
-    
+
+    def can_cancel_vote?(user = User.current)
+      user.votes_bet_by_issue(self) > 0
+    end
+
     def valid_bets
       self.bets.all(
         :select => "sum(votes) as sum_votes, user_id",

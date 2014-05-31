@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-match 'projects/:project_id/polls' => 'polls#index'
-match 'projects/:project_id/polls/cancel_bet' => 'polls#cancel_bet'
-match 'projects/:project_id/polls/bet' => 'polls#bet'
+get 'projects/:project_id/polls' => 'polls#index'
+post 'projects/:project_id/polls/cancel_bet' => 'polls#cancel_bet'
+post 'projects/:project_id/polls/bet' => 'polls#bet'
 post 'projects/:project_id/polls/set_statuses' => 'polls#set_statuses'

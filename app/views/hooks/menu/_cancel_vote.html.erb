@@ -1,0 +1,8 @@
+<% if @issue.can_cancel_vote? %>
+  <%= link_to t(:link_cancel_bet),
+    url_for(:controller => 'polls', :action => 'cancel_bet', :issue_id => @issue.id, :project_id => @issue.project_id),
+    :method => :post,
+    :remote => true,
+    :confirm => t(:confirm_cancel_bet),
+    class: "icon icon-redmin-issues-poll-down" %>
+<% end %>
